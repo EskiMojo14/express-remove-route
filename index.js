@@ -34,7 +34,12 @@ function trimPrefix(path, prefix) {
   return path.substr(prefix.length);
 }
 
-module.exports = function removeRoute(app, path, method) {
+module.exports = function removeRoute(
+  app,
+  path,
+  method,
+  ignoreWildcard = true
+) {
   var found, route, stack, idx;
 
   found = findRoute(app, path);
@@ -43,7 +48,7 @@ module.exports = function removeRoute(app, path, method) {
     route = layer.route;
     stack = layer.stack;
 
-    if (route) {
+    if (route && (!ignoreWildcard || route.route.path !== "/*")) {
       if (_.isEmpty(method)) {
         // if no method delete all resource with the given path
         idx = stack.indexOf(route);
